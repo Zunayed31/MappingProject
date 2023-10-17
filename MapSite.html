@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Test google map (from W3Schools)</h1>
+
+<div id="googleMap" style="width:100%;height:600px;"></div>
+
+<script>
+function myMap() {
+var mapProp= {
+  center:new google.maps.LatLng(53.4808, -2.2384),
+  zoom:12,
+};
+
+var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
+    
+var locations = [
+    { lat: 53.467525, lng: -2.234003, title: 'Kilburn Building'},
+    { lat: 53.480937, lng: -2.237928, title: 'Picadilly Gardens'},
+    { lat: 53.477340, lng: -2.230734, title: 'Picadilly Station'},
+];
+
+for (var i = 0; i < locations.length; i++) {
+    var location = locations[i];
+    
+    var marker = new google.maps.Marker({
+      map: map,
+      position: { lat: location.lat, lng: location.lng },
+      title: location.title
+    });
+
+// new google.maps.Marker({
+//     map: map,
+//     title: 'Kilburn Building',
+//     position: {lat: 53.467525, lng: -2.234003}
+// });
+}
+}
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXxeK5VnYUjqfLM9ciK2h5MUgTeQjUu_I&callback=myMap"></script>
+
+</body>
+</html>
