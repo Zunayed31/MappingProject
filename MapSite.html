@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Map tester</title>
+  </head>
 <body>
 
 <h1>Test google map (from W3Schools)</h1>
@@ -18,15 +21,54 @@
 <div id="googleMap" style="width:100%;height:600px;"></div>
 
 <script>
+  
+function myMap() {
+var mapProp= {
+  center:new google.maps.LatLng(53.4808, -2.2384),
+  zoom:12,
+};
 
-  var locations = [];
+  document.getElementById("myForm").addEventListener("submit", function(event) {
+      event.preventDefault(); // Prevent the form from submitting
 
+      // Get the user's input
+      var userStart = document.getElementById("startField").value;
+      var userEnd = document.getElementById("endField").value;
+      try {
+        directionsDisplay.setMap(null);
+      } catch (error) {
+        console.error("Map has loaded")
+      } finally {
+        var directionsService = new google.maps.DirectionsService();
+
+        var request = {
+        origin: userStart,
+        destination: userEnd,
+        travelMode: 'DRIVING' // Other options: 'WALKING', 'BICYCLING', 'TRANSIT'
+        };
+
+        directionsService.route(request, function(response, status) {
+        if (status == 'OK') {
+          // Process the response to display the route on the map
+          var directionsDisplay = new google.maps.DirectionsRenderer();
+          directionsDisplay.setMap(map);
+          directionsDisplay.setDirections(response);
+        }
+        });
+      }
+
+});
+
+var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
   const fileInput = document.getElementById('fileInput');
   const output = document.getElementById('output');
 
   fileInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
+
+    var locations = [];
+    var line = [];
 
     reader.onload = function (e) {
       const content = e.target.result;
@@ -38,10 +80,24 @@
         var fields = lines[i].split('>');
         var waypoint = fields[0].trimEnd();
         var stats = fields[1].replace(/\(|\)/g, '');
-        stats = stats.trim();
         stats = stats.split(',');
-        var dictTemp = { lat: stats[0], lng: stats[1], title: waypoint }
+        stats[0] = parseFloat(stats[0].trim());
+        stats[1] = parseFloat(stats[1].trim()); 
+        var dictTemp = { lat: stats[0], lng: stats[1], title: waypoint };
+        var path = [stats[0],stats[1]];
         locations.push(dictTemp);
+        line.push(path);
+
+        var location = locations[i];
+        
+        var marker = new google.maps.Marker({
+          map: map,
+          position: { lat: location.lat, lng: location.lng },
+          title: location.title
+        });
+
+        
+
         console.log(locations);
       }
       // Example: Display the lines in a <pre> element
@@ -49,29 +105,13 @@
     };
 
     reader.readAsText(file);
+
   });
 
 
-
-function myMap() {
-var mapProp= {
-  center:new google.maps.LatLng(53.4808, -2.2384),
-  zoom:12,
-};
-
-var map = new google.maps.Map(document.getElementById("googleMap"),mapProp);
-    
-for (var i = 0; i < locations.length; i++) {
-    var location = locations[i];
-    
-    var marker = new google.maps.Marker({
-      map: map,
-      position: { lat: location.lat, lng: location.lng },
-      title: location.title
-    });
-  }
 }
 window.myMap = myMap;
+
 
 </script>
 
