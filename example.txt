@@ -1,0 +1,23 @@
+[1]: https://www.rome2rio.com/s/Kilburn-Station/Manchester ""
+[2]: https://www.rome2rio.com/s/Manchester-Piccadilly-Station/Manchester ""
+[3]: https://www.rome2rio.com/s/Manchester-Piccadilly-Station/Peninsula-Building ""
+[4]: https://moovitapp.com/index/en-gb/public_transportation-Kilburn_Building-North_West-site_23805381-2105 ""
+
+According to the web search results, the shortest path available from Kilburn Building, Manchester to Picadilly Station, Manchester by car is as follows:
+
+- Start at Kilburn Building, Oxford Road, Manchester M13 9PL, UK > (53.4675, -2.2337)
+- Head south on Oxford Road toward Burlington Street > (53.4673, -2.2337)
+- Turn right onto Booth Street West > (53.4668, -2.2338)
+- Turn left onto Higher Cambridge Street > (53.4668, -2.2356)
+- Turn right onto Lloyd Street North > (53.4659, -2.2372)
+- Turn left onto the A57(M) slip road to Ring Road (W)/M60/M62/M61/M6 > (53.4658, -2.2384)
+- Merge onto A57(M) > (53.4658, -2.2391)
+- Keep left to stay on A57(M) > (53.4666, -2.2411)
+- Take the exit toward Piccadilly > (53.4729, -2.2387)
+- Merge onto London Road/A6 > (53.4732, -2.2386)
+- Turn right onto Fairfield Street > (53.4757, -2.2361)
+- Turn left onto Boad Street > (53.4764, -2.2351)
+- Turn right onto Station Approach > (53.4771, -2.2321)
+- Arrive at Picadilly Station, Manchester M60 7RA, UK > (53.4775, -2.2309)
+
+The total distance is about 2.1 km and the estimated travel time is about 9 minutes, depending on the traffic conditions. You can see the map of the route [here](https://www.rome2rio.com/s/Kilburn-Station/Manchester).
