@@ -29,6 +29,8 @@
         var directionsDisplay;
         var map;
         var markers = []; // An array to store the markers.
+        var firstRoute = [];
+        var secondRoute = [];
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -55,10 +57,47 @@
             }, function (response, status) {
                 if (status === 'OK') {
                     directionsDisplay.setDirections(response);
+                    const route = response.routes[0].legs[0];
+                    const totalDistance = route.distance.value; // in meters
+
+                    // Specify the number of waypoints you want
+                    const numWaypoints = 20;
+                    const interval = totalDistance / numWaypoints;
+
+                    // Calculate and extract evenly spaced waypoints
+                    for (let i = 0; i < numWaypoints; i++) {
+                    const distanceAlongRoute = i * interval;
+                    const location = getWaypointLocation(route, distanceAlongRoute);
+                    firstRoute.push(location);
+                    }
+
+                    console.log(firstRoute);
                 } else {
                     window.alert('Directions request failed due to ' + status);
                 }
             });
+        }
+
+        function getWaypointLocation(route, distance) {
+            let currentDistance = 0;
+
+            // Iterate through the steps of the route to find the correct segment
+            for (const step of route.steps) {
+                const stepDistance = step.distance.value;
+
+                if (currentDistance + stepDistance > distance) {
+                const fraction = (distance - currentDistance) / stepDistance;
+                const lat = step.start_location.lat() + fraction * (step.end_location.lat() - step.start_location.lat());
+                const lng = step.start_location.lng() + fraction * (step.end_location.lng() - step.start_location.lng());
+
+                return { lat, lng };
+                }
+
+                currentDistance += stepDistance;
+            }
+
+            // If the distance is beyond the route, return the destination
+            return { lat: route.end_location.lat(), lng: route.end_location.lng() };
         }
 
         function addMarkersFromFile() {
@@ -93,8 +132,8 @@
             var lines = content.split('\n');
 
             for (var i = 0; i < lines.length; i++) {
-                firstChar = lines[0];
-                if (firstChar == "-"){
+                firstChar = lines[i][0];
+                if (firstChar != "-"){
                     continue;
                 }
                 var parts = lines[i].split('>');
@@ -167,6 +206,43 @@
                     }
                 });
                 directionsDisplay.setDirections(result);
+                var totalDistance = 0;
+                var legs = response.routes[0].legs;
+
+                for (var i = 0; i < legs.length; i++) {
+                totalDistance += legs[i].distance.value;
+                }
+
+                // Calculate the distance between each waypoint
+                var distanceBetweenWaypoints = totalDistance / 20; // Change 20 to the desired number of waypoints
+
+                // Extract waypoints from the response with even spacing
+                var waypoints = [];
+                var currentDistance = 0;
+
+                for (var i = 0; i < legs.length; i++) {
+                var steps = legs[i].steps;
+
+                for (var j = 0; j < steps.length; j++) {
+                    var path = steps[j].path;
+
+                    for (var k = 0; k < path.length; k++) {
+                    if (currentDistance >= distanceBetweenWaypoints) {
+                        var waypoint = {
+                        lat: path[k].lat(),
+                        lng: path[k].lng()
+                        };
+                        secondRoute.push(waypoint);
+                        currentDistance = 0;
+                    } else {
+                        currentDistance += steps[j].distance.value;
+                    }
+                    }
+                }
+                }
+
+                // Now 'waypoints' array contains evenly spaced waypoints along the route
+                console.log(secondRoute);
                 } else {
                 alert('Error: Unable to calculate the route.');
                 }
