@@ -23,7 +23,9 @@
 
     <div id="map" style="height: 600px; width: 100%;"></div>
 
-    <h1><span id="name"></span></h1>
+    <h1><span id="arr0"></span></h1>
+    <h1><span id="arr1"></span></h1>
+    <h1><span id="arr2"></span></h1>
     <script>
         var exArr = [];
         var arr1 = [];
@@ -119,20 +121,26 @@
             
             let routes = [arr1, arr2, arr3];
             for (let i = 0; i < routes.length; i++) {
+                let sender = "arr" + String(i);
                 let compArr = [];
                 for (let j = 0; j < routes[i].length; j++){
                     let routeA = routes[i][j].split(",");
                     let routeB = exArr[i][j].split(",");
+                    let part1 = Math.abs(routeA[0] - routeB [0]);
+                    let part2 = Math.abs(routeA[1] - routeB [1]);
                     
-
                 }
                 
             }
         });
     </script>
-    <script>
-        let name = "Nathan";
-        document.getElementById("name").innerHTML = name;
-      </script>
+        <script>
+            let arr0 = "Nathan";
+            document.getElementById("arr0").innerHTML = arr0;
+            let arr1 = "Nathan";
+            document.getElementById("arr1").innerHTML = arr1;
+            let arr2 = "Nathan";
+            document.getElementById("arr2").innerHTML = arr2;
+        </script>
 </body>
 </html>
