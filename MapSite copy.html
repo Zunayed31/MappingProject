@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Route Finder</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXxeK5VnYUjqfLM9ciK2h5MUgTeQjUu_I&libraries=places"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDVS9S2Txb-yhzTW2YkB7ZSSIMUw5EIGsU&libraries=places"></script>
 </head>
 <body>
     <h1>Route Finder</h1>
@@ -22,17 +22,15 @@
     
 
     <div id="map" style="height: 600px; width: 100%;"></div>
-
-    <h1><span id="arr0"></span></h1>
-    <h1><span id="arr1"></span></h1>
-    <h1><span id="arr2"></span></h1>
+    <div id="dynamicContentContainer"></div>
+    
     <script>
-        var exArr = [];
-        var arr1 = [];
-        var arr2 = [];
-        var arr3 = [];
-        var waypointsArr = [{ location: 'Weston Hall, Manchester', stopover: true },
-                            { location: 'Manchester Astronomical Society', stopover: true }]
+        // let exArr = [];
+        // let arr1 = [];
+        // let arr2 = [];
+        // let arr3 = [];
+        var waypointsArr = [{ location: 'Weston Hall, Manchester', stopover: false },
+                            { location: 'Manchester Astronomical Society', stopover: false }]
                             
         var map;
 
@@ -46,6 +44,7 @@
         initMap();
 
         function displayRoute(destination, colour){
+            return new Promise(function (resolve, reject) { 
             var start = 'Kilburn Building, Manchester';
             var end = destination;
 
@@ -54,18 +53,20 @@
                 map: map,
                 polylineOptions:{
                     strokeColor: colour, 
-                    strokeOpacity: 0.3,
+                    strokeOpacity: 0.8,
                 }
             });
             directionsService.route({
                 origin: 'Kilburn Building, Manchester',
                 destination: end,
                 waypoints: waypointsArr,
+                optimizeWaypoints: true,
                 travelMode: 'DRIVING'
             }, function (response, status) {
                 if (status === 'OK') {
                     directionsDisplay.setDirections(response);
                     valuesArr = [];
+                    console.log(valuesArr);
                     const route = response.routes[0].legs[0];
                     const totalDistance = route.distance.value; // in meters
 
@@ -79,12 +80,11 @@
                     const location = getWaypointLocation(route, distanceAlongRoute);
                     valuesArr.push(location);
                     }
-
-                    console.log(valuesArr);
-                    return valuesArr;
+                    resolve(valuesArr);
                 } else {
-                    window.alert('Directions request failed due to ' + status);
+                    reject(window.alert('Directions request failed due to ' + status));
                 }
+            }); 
             });
         }
 
@@ -110,37 +110,48 @@
             return { lat: route.end_location.lat(), lng: route.end_location.lng() };
         }
 
+        async function caller(){
+            let arr1 = await displayRoute('Etihad Stadium', 'red');
+            let arr2 = await displayRoute('Picadilly Station', 'blue');
+            let arr3 = await displayRoute('Gay village', 'yellow');
+            let exArr = await displayRoute('Picadilly Station', 'orange');  
+
+            let arrMean = [];
+
+            let routes = [arr1, arr2, arr3];
+            for (let i = 0; i < routes.length; i++) {
+                let compArr = 0;
+                for (let j = 0; j < routes[i].length; j++){
+                    const latArray = routes[i].map(({ lat }) => lat);
+                    const lngArray = routes[i].map(({ lng }) => lng);
+                    const exLatArray = exArr.map(({ lat }) => lat);
+                    const exLngArray = exArr.map(({ lng }) => lng);
+                    let part1 = Math.abs(latArray[j] - exLatArray[j]);
+                    let part2 = Math.abs(lngArray[j] - exLngArray[j]);
+                    compArr = compArr + part1 + part2;
+
+                }
+                arrMean.push(compArr);
+            }
+            let total = 0;
+            arrMean.forEach(element => {
+                total = total + element;
+            });
+            var container = document.getElementById("dynamicContentContainer");
+            for (let index = 0; index < arrMean.length; index++) {
+                let mean = (arrMean[index]/total).toFixed(2);
+                var paragraph = document.createElement("p");
+                paragraph.textContent = index + ": " + mean;
+                container.appendChild(paragraph);
+
+            }
+
+        }
 
         document.getElementById('route-form').addEventListener('submit', function (e) {
             e.preventDefault();
-            arr1 = displayRoute('Etihad Stadium', 'red');
-            arr2 = displayRoute('Picadilly Station', 'blue');
-            arr3 = displayRoute('Gay village', 'yellow');
-            exArr = displayRoute('Picadilly Station', 'orange');     
-            
-            
-            let routes = [arr1, arr2, arr3];
-            for (let i = 0; i < routes.length; i++) {
-                let sender = "arr" + String(i);
-                let compArr = [];
-                for (let j = 0; j < routes[i].length; j++){
-                    let routeA = routes[i][j].split(",");
-                    let routeB = exArr[i][j].split(",");
-                    let part1 = Math.abs(routeA[0] - routeB [0]);
-                    let part2 = Math.abs(routeA[1] - routeB [1]);
-                    
-                }
-                
-            }
+            caller();
         });
     </script>
-        <script>
-            let arr0 = "Nathan";
-            document.getElementById("arr0").innerHTML = arr0;
-            let arr1 = "Nathan";
-            document.getElementById("arr1").innerHTML = arr1;
-            let arr2 = "Nathan";
-            document.getElementById("arr2").innerHTML = arr2;
-        </script>
 </body>
 </html>
