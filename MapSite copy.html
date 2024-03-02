@@ -175,11 +175,14 @@
                 };
             });
 
+           waypoints = waypoints.slice(0, -1).concat(waypointsArr, waypoints.slice(-1));
+
             var directionsService = new google.maps.DirectionsService();
             var request = {
                 origin: waypoints[0].location,
                 destination: waypoints[waypoints.length - 1].location,
                 waypoints: waypoints.slice(1, waypoints.length - 1),
+                optimizeWaypoints: true,
                 travelMode: google.maps.TravelMode.DRIVING
             };
 
@@ -215,21 +218,16 @@
         });
             }
 
-
-        async function caller(){
-            let arr1 = await displayRoute('Picadilly Station', 'red');
-            let arr2 = await addMarkersFromFile();
-            let arr3 = await displayRoute('Gay village', 'yellow');
-            let exArr = await displayRoute(document.getElementById('end').value, 'orange');  
-
+        function calculateMeanAndDisplay(routes, exArr, maxJ){
             let arrMean = [];
+            let total = 0;
+            var container = document.getElementById("dynamicContentContainer");
+            var colourArr = ['Red', 'Blue', 'Yellow'];
 
-            let routes = [arr1, arr2, arr3];
-            console.log(arr2);
-            console.log(routes);
             for (let i = 0; i < routes.length; i++) {
                 let compArr = 0;
-                for (let j = 0; j < routes[i].length; j++){
+
+                for (let j = 0; j < Math.min(routes[i].length, maxJ); j++){
                     const latArray = routes[i].map(({ lat }) => lat);
                     const lngArray = routes[i].map(({ lng }) => lng);
                     const exLatArray = exArr.map(({ lat }) => lat);
@@ -239,14 +237,10 @@
                     compArr = compArr + part1 + part2;
 
                 }
+                total += compArr;
                 arrMean.push(compArr);
-            }
-            let total = 0;
-            arrMean.forEach(element => {
-                total = total + element;
-            });
-            var container = document.getElementById("dynamicContentContainer");
-            var colourArr = ['Red','Blue','Yellow'];
+            };
+            // container.innerHTML = "";
             for (let index = 0; index < arrMean.length; index++) {
                 let mean = (arrMean[index]/total).toFixed(2);
                 var paragraph = document.createElement("p");
@@ -254,6 +248,25 @@
                 container.appendChild(paragraph);
 
             }
+        }
+        
+        async function caller(){
+            let arr1 = await displayRoute('Picadilly Station', 'red');
+            let arr2 = await addMarkersFromFile();
+            let arr3 = await displayRoute('Gay village', 'yellow');
+            let exArr = await displayRoute(document.getElementById('end').value, 'orange');  
+
+            console.log(arr1);
+            console.log(exArr);
+            let routes = [arr1, arr2, arr3];
+
+            calculateMeanAndDisplay(routes, exArr, 2);
+            setTimeout(3000);
+            calculateMeanAndDisplay(routes, exArr, 5);
+            setTimeout(3000);
+            calculateMeanAndDisplay(routes, exArr, 10);
+            setTimeout(3000);
+            calculateMeanAndDisplay(routes, exArr, 20);
 
         }
 
