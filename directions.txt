@@ -1,7 +1,0 @@
-
-
-Picadilly Station, Manchester -> (53.47875, -2.24087)
-Oxford Road -> (53.47478, -2.24164)
-Portland Street -> (53.47582, -2.24019)
-Chorlton Street -> (53.47650, -2.23862)
-Kilburn Building, Manchester -> (53.47761, -2.23553)
